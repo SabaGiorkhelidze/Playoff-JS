@@ -66,13 +66,18 @@ function playoffRound(teams) {
 function simulatePlayoff(teams) {
   let currentTeams = [...teams];
   let rounds = ["8th final", "quarterfinal", "semifinal", "final"];
+  const playoffDiv = document.getElementById('playoff');
+  playoffDiv.innerHTML = '';
 
   for (let round of rounds) {
-    console.log(`\n--- ${round.toUpperCase()} ---`);
     if (currentTeams.length === 0) {
-      console.log("No teams left to compete.");
+      playoffDiv.innerHTML += `<div>No teams left to compete.</div>`;
       return;
     }
+
+    playoffDiv.innerHTML += `<h2>${round.toUpperCase()}</h2>`;
+    let roundDiv = document.createElement('div');
+    roundDiv.className = 'round';
 
     let numberOfMatches = currentTeams.length / 2;
     let matches = [];
@@ -85,17 +90,21 @@ function simulatePlayoff(teams) {
     for (let match of matches) {
       let winner = simulateMatch(match);
       winners.push(winner);
-      console.log(`${match[0].id} vs ${match[1].id} => Winner: ${winner.id}`);
+      let matchDiv = document.createElement('div');
+      matchDiv.className = 'match';
+      matchDiv.innerHTML = `${match[0].id} vs ${match[1].id} => Winner: <span class="match-winner">${winner.id}</span>`;
+      roundDiv.appendChild(matchDiv);
     }
 
+    playoffDiv.appendChild(roundDiv);
     currentTeams = winners;
   }
 
   if (currentTeams.length > 0) {
-    console.log(`\nChampion: ${currentTeams[0].id}`);
+    playoffDiv.innerHTML += `<h2>Champion: ${currentTeams[0].id}</h2>`;
   } else {
-    console.log("No champion could be determined.");
+    playoffDiv.innerHTML += `<h2>No champion could be determined.</h2>`;
   }
 }
 
-simulatePlayoff(teams);
+document.getElementById('startSimulation').addEventListener('click', () => simulatePlayoff(teams));
